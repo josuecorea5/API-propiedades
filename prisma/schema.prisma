@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String
+  email String @unique
+  password String
+  token String?
+  confirmed Boolean
+  properties Property[]
+  messages Message[]
+}
+
+model Property {
+  id String @id @default(uuid())
+  title String
+  description String @db.Text
+  bedrooms Int 
+  garages Int
+  bathrooms Int
+  street String
+  lat Decimal
+  lng Decimal
+  image String
+  published Boolean @default(false)
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId Int 
+  price Price @relation(fields: [priceId], references: [id])
+  priceId Int 
+  user User @relation(fields: [userId], references: [id])
+  userId Int 
+  messages Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  name String
+  properties Property[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Price {
+  id Int @id @default(autoincrement())
+  name String
+  properties Property[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  message String
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  property Property @relation(fields: [propertyId], references: [id])
+  propertyId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
